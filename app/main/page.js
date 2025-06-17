@@ -322,24 +322,24 @@ const [weekRangeFilter, setWeekRangeFilter] = useState(() => {
             </div>
             
             <div>
-              <h3 className={`${styles.koreanFont} font-semibold mb-4`}>강의</h3>
+              <h3 className={`${styles.koreanFont} font-semibold mb-4`}>링크</h3>
               <ul className={`${styles.koreanFont} space-y-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} font-light`}>
-                <li><a href="#" className="hover:text-pink-600 transition-colors duration-200">프론트엔드</a></li>
-                <li><a href="#" className="hover:text-pink-600 transition-colors duration-200">같은거 가르치지 않습니다</a></li>
+                <li><a href="https://www.youtube.com/@JU_RURU" className="hover:text-pink-600 transition-colors duration-200">주르르 유튜브</a></li>
+                <li><a href="https://www.youtube.com/@UnsealedJURURU" className="hover:text-pink-600 transition-colors duration-200">봉인 풀린 주르르</a></li>
               </ul>
             </div>
             
             <div>
-              <h3 className={`${styles.koreanFont} font-semibold mb-4`}>지원</h3>
+              <h3 className={`${styles.koreanFont} font-semibold mb-4`}>　</h3>
               <ul className={`${styles.koreanFont} space-y-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} font-light`}>
-                <li><a href="#" className="hover:text-pink-600 transition-colors duration-200">고객센터</a></li>
-                <li><a href="#" className="hover:text-pink-600 transition-colors duration-200">는 없습니다</a></li>
+                <li><a href="https://ch.sooplive.co.kr/cotton1217" className="hover:text-pink-600 transition-colors duration-200">주르르 생방송</a></li>
+                <li><a href="https://cafe.naver.com/steamindiegame" className="hover:text-pink-600 transition-colors duration-200">왁물원</a></li>
               </ul>
             </div>
           </div>
           
           <div className={`${styles.koreanFont} mt-8 pt-8 border-t ${isDarkMode ? 'border-gray-700' : 'border-gray-200'} text-center ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} font-light`}>
-            <p>&copy; 2025 VideoHub. All rights reserved.</p>
+            <p>&copy; 2025 dotHi. All rights reserved.</p>
           </div>
         </div>
       </footer>
