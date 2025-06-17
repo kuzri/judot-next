@@ -1,0 +1,306 @@
+/* styles/Home.module.css */
+
+/* 폰트 최적화 클래스 */
+.fontOptimized {
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', sans-serif;
+  font-feature-settings: 'kern' 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+.koreanFont {
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+  font-feature-settings: 'kern' 1;
+  letter-spacing: -0.01em;
+  word-break: keep-all;
+  line-height: 1.6;
+}
+
+.englishFont {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', sans-serif;
+  font-feature-settings: 'kern' 1, 'liga' 1, 'calt' 1;
+  letter-spacing: -0.005em;
+}
+
+.logoFont {
+  font-family: 'Inter', 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  font-feature-settings: 'kern' 1, 'liga' 1;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.heroFont {
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  font-feature-settings: 'kern' 1;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  word-break: keep-all;
+}
+
+.header {
+  @apply backdrop-blur-sm;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}
+
+.logo {
+  @apply relative;
+  animation: logoGlow 3s ease-in-out infinite alternate;
+}
+
+@keyframes logoGlow {
+  0% {
+    filter: drop-shadow(0 0 5px rgba(59, 130, 246, 0.3));
+  }
+  100% {
+    filter: drop-shadow(0 0 15px rgba(147, 51, 234, 0.3));
+  }
+}
+
+.navLink {
+  @apply relative font-medium;
+  transition: all 0.3s ease;
+}
+
+.navLink::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+  transition: width 0.3s ease;
+}
+
+.navLink:hover::after {
+  width: 100%;
+}
+
+.toggleButton {
+  @apply relative overflow-hidden;
+  box-shadow: 0 4px 15px 0 rgba(0, 0, 0, 0.2);
+}
+
+.toggleButton::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.toggleButton:hover::before {
+  left: 100%;
+}
+
+.heroTitle {
+  @apply relative;
+  animation: fadeInUp 1s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.videoCard {
+  @apply relative overflow-hidden;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+  backdrop-filter: blur(10px);
+  box-shadow: 
+    0 4px 15px 0 rgba(0, 0, 0, 0.1),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.videoCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.1), transparent);
+  transition: left 0.6s;
+  z-index: 1;
+}
+
+.videoCard:hover::before {
+  left: 100%;
+}
+
+.videoCard:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 
+    0 20px 40px 0 rgba(0, 0, 0, 0.15),
+    0 0 0 1px rgba(59, 130, 246, 0.2);
+}
+
+.videoTitle {
+  @apply relative z-10;
+  transition: all 0.3s ease;
+}
+
+.footer {
+  @apply relative;
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.02), rgba(0, 0, 0, 0.05));
+}
+
+/* Dark mode specific animations */
+:global(.dark) .videoCard {
+  background: linear-gradient(145deg, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.1));
+  box-shadow: 
+    0 4px 15px 0 rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+:global(.dark) .videoCard:hover {
+  box-shadow: 
+    0 20px 40px 0 rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(147, 51, 234, 0.3);
+}
+
+/* Responsive animations */
+@media (max-width: 768px) {
+  .videoCard {
+    transition: all 0.3s ease;
+  }
+  
+  .videoCard:hover {
+    transform: translateY(-4px) scale(1.01);
+  }
+}
+
+/* Custom scrollbar */
+:global(html) {
+  scroll-behavior: smooth;
+}
+
+:global(body)::-webkit-scrollbar {
+  width: 8px;
+}
+
+:global(body)::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+:global(body)::-webkit-scrollbar-thumb {
+  background: linear-gradient(45deg, #3b82f6, #8b5cf6);
+  border-radius: 10px;
+}
+
+:global(body)::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(45deg, #2563eb, #7c3aed);
+}
+
+/* Glass morphism effect for mobile */
+@media (max-width: 640px) {
+  .header {
+    backdrop-filter: blur(20px);
+    background: rgba(255, 255, 255, 0.8);
+  }
+  
+  :global(.dark) .header {
+    background: rgba(17, 24, 39, 0.8);
+  }
+}
+
+/* Hover effects for touch devices */
+@media (hover: none) {
+  .videoCard:hover {
+    transform: none;
+  }
+  
+  .videoCard:active {
+    transform: scale(0.98);
+  }
+}
+
+/* Advanced gradient animations */
+.logo {
+  background: linear-gradient(45deg, #3b82f6, #8b5cf6, #ec4899);
+  background-size: 200% 200%;
+  animation: gradientShift 4s ease infinite;
+}
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Loading animation for video thumbnails */
+.videoCard img {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.videoCard:hover img {
+  filter: brightness(1.1) saturate(1.2);
+}
+
+/* Floating animation for toggle button */
+.toggleButton {
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-2px);
+  }
+}
+
+/* Stagger animation for video cards */
+.videoCard:nth-child(1) {
+  animation: slideInUp 0.6s ease-out 0.1s both;
+}
+
+.videoCard:nth-child(2) {
+  animation: slideInUp 0.6s ease-out 0.2s both;
+}
+
+.videoCard:nth-child(3) {
+  animation: slideInUp 0.6s ease-out 0.3s both;
+}
+
+.videoCard:nth-child(4) {
+  animation: slideInUp 0.6s ease-out 0.4s both;
+}
+
+.videoCard:nth-child(5) {
+  animation: slideInUp 0.6s ease-out 0.5s both;
+}
+
+.videoCard:nth-child(6) {
+  animation: slideInUp 0.6s ease-out 0.6s both;
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
