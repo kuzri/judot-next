@@ -256,14 +256,14 @@ const [weekRangeFilter, setWeekRangeFilter] = useState(() => {
             initialWeekRange={weekRangeFilter}
           />
           
-          {/* 현재 필터 상태 표시 */}
+          {/* 현재 필터 상태 표시
           {mem.length > 0 && (
             <div className="mt-4">
               <p className={`${styles.koreanFont} text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                 현재 필터: {mem.join(', ')}
               </p>
             </div>
-          )}
+          )} */}
         </div>
         
         {/* Video Grid */}
