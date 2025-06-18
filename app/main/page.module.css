@@ -916,7 +916,7 @@
   color: #8b56fc;
 }
 
-.statValue부가땅 {
+.statValue징버거 {
   color: #fbbf24;
 }
 
@@ -1021,11 +1021,11 @@
   color: #c4b5fd;
 }
 
-.memberHeaderTitle부가땅 {
+.memberHeaderTitle징버거 {
   color: #fbbf24;
 }
 
-.darkMode .memberHeaderTitle부가땅 {
+.darkMode .memberHeaderTitle징버거 {
   color: #fbbf24;
 }
 
@@ -1052,54 +1052,3 @@
 .darkMode .memberHeaderTitle비챤 {
   color: #6ee7b7;
 }
-
-/* 멤버별 헤더 배경색 (선택사항 - 더 강조하고 싶다면) */
-/* .memberHeader아이네 {
-  border-color: #7c3aed;
-  background: linear-gradient(135deg, rgba(124, 58, 237, 0.1) 0%, rgba(124, 58, 237, 0.05) 100%);
-}
-
-.darkMode .memberHeader아이네 {
-  border-color: #c4b5fd;
-  background: linear-gradient(135deg, rgba(196, 181, 253, 0.2) 0%, rgba(196, 181, 253, 0.1) 100%);
-}
-
-.memberHeader부가땅 {
-  border-color: #d97706;
-  background: linear-gradient(135deg, rgba(217, 119, 6, 0.1) 0%, rgba(217, 119, 6, 0.05) 100%);
-}
-
-.darkMode .memberHeader부가땅 {
-  border-color: #fbbf24;
-  background: linear-gradient(135deg, rgba(251, 191, 36, 0.2) 0%, rgba(251, 191, 36, 0.1) 100%);
-}
-
-.memberHeader릴파 {
-  border-color: #4f46e5;
-  background: linear-gradient(135deg, rgba(79, 70, 229, 0.1) 0%, rgba(79, 70, 229, 0.05) 100%);
-}
-
-.darkMode .memberHeader릴파 {
-  border-color: #93c5fd;
-  background: linear-gradient(135deg, rgba(147, 197, 253, 0.2) 0%, rgba(147, 197, 253, 0.1) 100%);
-}
-
-.memberHeader고세구 {
-  border-color: #2563eb;
-  background: linear-gradient(135deg, rgba(37, 99, 235, 0.1) 0%, rgba(37, 99, 235, 0.05) 100%);
-}
-
-.darkMode .memberHeader고세구 {
-  border-color: #7dd3fc;
-  background: linear-gradient(135deg, rgba(125, 211, 252, 0.2) 0%, rgba(125, 211, 252, 0.1) 100%);
-}
-
-.memberHeader비챤 {
-  border-color: #059669;
-  background: linear-gradient(135deg, rgba(5, 150, 105, 0.1) 0%, rgba(5, 150, 105, 0.05) 100%);
-}
-
-.darkMode .memberHeader비챤 {
-  border-color: #6ee7b7;
-  background: linear-gradient(135deg, rgba(110, 231, 183, 0.2) 0%, rgba(110, 231, 183, 0.1) 100%);
-} */

@@ -37,7 +37,7 @@ export default function Main() {
   const [isDarkMode, setIsDarkMode] = useState(false);
 
   // 멤버 리스트 정의
-  const memberList = ["아이네", "부가땅", "릴파", "고세구", "비챤"];
+  const memberList = ["아이네", "징버거", "릴파", "고세구", "비챤"];
 
   // 주간 통계 계산 함수
   const calculateWeeklyStats = (dataToAnalyze) => {
@@ -54,7 +54,7 @@ export default function Main() {
     // 데이터를 순회하며 각 멤버별 카운트
     dataToAnalyze.forEach(item => {
       memberList.forEach(member => {
-        if (item.text && item.text.includes(member)) {
+        if (item.member && item.member === member) {
           stats.members[member]++;
         }
       });
@@ -69,7 +69,7 @@ export default function Main() {
     
     memberList.forEach(member => {
       const memberVideos = dataToGroup.filter(item => 
-        item.text && item.text.includes(member)
+        item.member && item.member === member
       );
       
       if (memberVideos.length > 0) {
@@ -167,7 +167,7 @@ export default function Main() {
     // 멤버 필터링 적용
     if (mem.length > 0) {
       weeklyFilteredData = weeklyFilteredData.filter(item => 
-        mem.some(memberName => item.text.includes(memberName))
+        mem.some(memberName => item.member ===memberName)
       );
     }
 
@@ -223,9 +223,9 @@ export default function Main() {
                 </button>
                 <button 
                   className={`${styles.navButton} ${styles.koreanFont} ${
-                    mem.includes("부가땅") ? styles.navButtonBugat : ''
+                    mem.includes("징버거") ? styles.navButtonBugat : ''
                   }`} 
-                  onClick={() => toggleMember("부가땅")}
+                  onClick={() => toggleMember("징버거")}
                 >
                   징버거
                 </button>
@@ -299,7 +299,7 @@ export default function Main() {
               {memberList.map(member => (
                 <div key={member} className={`${styles.statCard} ${isDarkMode ? styles.statCardDark : styles.statCardLight}`}>
                   <div className={`${styles.koreanFont} ${styles.statLabel} ${isDarkMode ? styles.statLabelDark : styles.statLabelLight}`}>
-                    {member === "부가땅" ? "징버거" : member}
+                    {member}
                   </div>
                   <div className={`${styles.statValue} ${styles[`statValue${member}`]}`}>
                     {weeklyStats.members?.[member] || 0}
@@ -320,7 +320,7 @@ export default function Main() {
                   {/* Member Header */}
                   <div className={`${styles.memberHeader} ${styles[`memberHeader${member}`]} ${isDarkMode ? styles.memberHeaderDark : styles.memberHeaderLight}`}>
                     <h3 className={`${styles.koreanFont} ${styles.memberHeaderTitle} ${styles[`memberHeaderTitle${member}`]} ${isDarkMode ? styles.memberHeaderTitleDark : styles.memberHeaderTitleLight}`}>
-                      {member === "부가땅" ? "징버거" : member} ({memberVideos.length})
+                      {member} ({memberVideos.length})
                     </h3>
                   </div>
                   
