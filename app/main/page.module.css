@@ -808,28 +808,6 @@
   }
 }
 
-/* Custom scrollbar */
-html {
-  scroll-behavior: smooth;
-}
-
-body::-webkit-scrollbar {
-  width: 8px;
-}
-
-body::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-body::-webkit-scrollbar-thumb {
-  background: linear-gradient(45deg, #ec4899, #f472b6);
-  border-radius: 10px;
-}
-
-body::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(45deg, #db2777, #ec4899);
-}
-
 /* page.module.css에 추가할 스타일들 */
 
 /* 주간 통계 섹션 */

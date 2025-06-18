@@ -5,6 +5,29 @@
   --foreground: #171717;
 }
 
+/* Custom scrollbar */
+html {
+  scroll-behavior: smooth;
+}
+
+body::-webkit-scrollbar {
+  width: 8px;
+}
+
+body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+body::-webkit-scrollbar-thumb {
+  background: linear-gradient(45deg, #ec4899, #f472b6);
+  border-radius: 10px;
+}
+
+body::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(45deg, #db2777, #ec4899);
+}
+
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);

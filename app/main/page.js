@@ -3,37 +3,36 @@
 import { useState, useEffect } from 'react';
 import Head from 'next/head';
 import styles from './page.module.css';
-import { db } from "../lib/firebaseConfig"; // Firebase 설정 파일에서 db 가져오기
+import { db } from "../lib/firebaseConfig";
 import { collection, query, orderBy, getDocs } from "firebase/firestore";
-import WeeklyFilter from '../component/WeeklyFilter'; // WeeklyFilter 컴포넌트 가져오기
+import WeeklyFilter from '../component/WeeklyFilter';
 
 export default function Main() {
-
-  const [data, setData] = useState([]);
+  // const [data, setData] = useState([]);
   const [originData, setOriginData] = useState([]);
-  const [mem, setMem] = useState([]); // 배열로 변경
-  const [weeklyStats, setWeeklyStats] = useState({}); // 주간 통계 상태 추가
-  const [groupedData, setGroupedData] = useState({}); // 멤버별로 그룹화된 데이터
+  const [mem, setMem] = useState([]);
+  const [weeklyStats, setWeeklyStats] = useState({});
+  const [groupedData, setGroupedData] = useState({});
   
   // 초기값 설정 - 현재 주의 시작일과 끝일
-const [weekRangeFilter, setWeekRangeFilter] = useState(() => {
-  const now = new Date();
-  const day = now.getDay(); // 0(일) ~ 6(토)
-  const mondayOffset = day === 0 ? -6 : 1 - day;
+  const [weekRangeFilter, setWeekRangeFilter] = useState(() => {
+    const now = new Date();
+    const day = now.getDay(); // 0(일) ~ 6(토)
+    const mondayOffset = day === 0 ? -6 : 1 - day;
 
-  const startOfWeek = new Date(now);
-  startOfWeek.setDate(now.getDate() + mondayOffset); // 월요일
+    const startOfWeek = new Date(now);
+    startOfWeek.setDate(now.getDate() + mondayOffset); // 월요일
 
-  const endOfWeek = new Date(startOfWeek);
-  endOfWeek.setDate(startOfWeek.getDate() + 6); // 일요일
+    const endOfWeek = new Date(startOfWeek);
+    endOfWeek.setDate(startOfWeek.getDate() + 6); // 일요일
 
-  const formatDate = (date) => date.toISOString().split('T')[0];
+    const formatDate = (date) => date.toISOString().split('T')[0];
 
-  return {
-    start: formatDate(startOfWeek), // yyyy-MM-dd
-    end: formatDate(endOfWeek)
-  };
-});
+    return {
+      start: formatDate(startOfWeek),
+      end: formatDate(endOfWeek)
+    };
+  });
 
   const [isDarkMode, setIsDarkMode] = useState(false);
 
@@ -85,10 +84,8 @@ const [weekRangeFilter, setWeekRangeFilter] = useState(() => {
   const toggleMember = (memberName) => {
     setMem(prevMem => {
       if (prevMem.includes(memberName)) {
-        // 이미 있으면 제거
         return prevMem.filter(name => name !== memberName);
       } else {
-        // 없으면 추가
         return [...prevMem, memberName];
       }
     });
@@ -101,6 +98,10 @@ const [weekRangeFilter, setWeekRangeFilter] = useState(() => {
 
   const handleWeekChange = (weekRange) => {
     setWeekRangeFilter(weekRange);
+  };
+
+  const toggleDarkMode = () => {
+    setIsDarkMode(!isDarkMode);
   };
 
   // 다크모드 상태를 localStorage에 저장하고 불러오기
@@ -126,30 +127,34 @@ const [weekRangeFilter, setWeekRangeFilter] = useState(() => {
   // Firebase에서 데이터 가져오기
   useEffect(() => {
     const fetchData = async () => {
-      const querySnapshot = await getDocs(query(collection(db, "scraped_links"),orderBy("uploadedDate", "asc")));
+      const querySnapshot = await getDocs(
+        query(collection(db, "scraped_links"), orderBy("uploadedDate", "asc"))
+      );
       
-      const docs = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })).map(doc => ({iframeUrl: `${doc.href}/embed?autoPlay=false&amp;mutePlay=false&amp;showChat=false`, ...doc}));
+      const docs = querySnapshot.docs
+        .map((doc) => ({ id: doc.id, ...doc.data() }))
+        .map(doc => ({
+          iframeUrl: `${doc.href}/embed?autoPlay=false&mutePlay=false&showChat=false`, 
+          ...doc
+        }));
+      
       setOriginData(docs);
     };
+    
     fetchData();
   }, []);
 
   // 필터링 로직과 주간 통계 계산을 통합한 useEffect
   useEffect(() => {
-    console.log("originData"+originData);
     // originData가 없으면 아직 로딩 중이므로 필터링하지 않음
     if (originData.length === 0) {
       return;
     }
 
-    let result = originData;
-
     // 주간 필터링 먼저 적용 (통계 계산을 위해)
-    let weeklyFilteredData = result;
+    let weeklyFilteredData = originData;
     if (weekRangeFilter.start && weekRangeFilter.end) {
-      console.log("weekRangeFilter.start", weekRangeFilter.start);
-      console.log("weekRangeFilter.end", weekRangeFilter.end);
-      weeklyFilteredData = result.filter(item => 
+      weeklyFilteredData = originData.filter(item => 
         item.uploadedDate >= weekRangeFilter.start && 
         item.uploadedDate <= weekRangeFilter.end
       );
@@ -166,16 +171,12 @@ const [weekRangeFilter, setWeekRangeFilter] = useState(() => {
       );
     }
 
-    setData(weeklyFilteredData);
+    // setData(weeklyFilteredData);
     
     // 멤버별로 데이터 그룹화
     const grouped = groupDataByMember(weeklyFilteredData);
     setGroupedData(grouped);
   }, [originData, mem, weekRangeFilter]);
-
-  const toggleDarkMode = () => {
-    setIsDarkMode(!isDarkMode);
-  };  
 
   return (
     <>
@@ -189,6 +190,7 @@ const [weekRangeFilter, setWeekRangeFilter] = useState(() => {
           rel="stylesheet" 
         />
       </Head>
+      
       <div className={`${styles.container} ${styles.fontOptimized} ${isDarkMode ? styles.darkMode : styles.lightMode}`}>
         {/* Header */}
         <header className={`${styles.header} ${isDarkMode ? styles.headerDark : styles.headerLight}`}>
@@ -207,42 +209,48 @@ const [weekRangeFilter, setWeekRangeFilter] = useState(() => {
                   className={`${styles.navButton} ${styles.koreanFont} ${
                     mem.length === 0 ? styles.navButtonActive : ''
                   }`} 
-                  onClick={selectAll}>
+                  onClick={selectAll}
+                >
                   전체
                 </button>
                 <button 
                   className={`${styles.navButton} ${styles.koreanFont} ${
                     mem.includes("아이네") ? styles.navButtonIne : ''
                   }`} 
-                  onClick={() => toggleMember("아이네")}>
+                  onClick={() => toggleMember("아이네")}
+                >
                   아이네
                 </button>
                 <button 
                   className={`${styles.navButton} ${styles.koreanFont} ${
                     mem.includes("부가땅") ? styles.navButtonBugat : ''
                   }`} 
-                  onClick={() => toggleMember("부가땅")}>
+                  onClick={() => toggleMember("부가땅")}
+                >
                   징버거
                 </button>
                 <button 
                   className={`${styles.navButton} ${styles.koreanFont} ${
                     mem.includes("릴파") ? styles.navButtonLilpa : ''
                   }`} 
-                  onClick={() => toggleMember("릴파")}>
+                  onClick={() => toggleMember("릴파")}
+                >
                   릴파
                 </button>
                 <button 
                   className={`${styles.navButton} ${styles.koreanFont} ${
                     mem.includes("고세구") ? styles.navButtonGosegu : ''
                   }`} 
-                  onClick={() => toggleMember("고세구")}>
+                  onClick={() => toggleMember("고세구")}
+                >
                   고세구
                 </button>
                 <button 
                   className={`${styles.navButton} ${styles.koreanFont} ${
                     mem.includes("비챤") ? styles.navButtonVIichan : ''
                   }`} 
-                  onClick={() => toggleMember("비챤")}>
+                  onClick={() => toggleMember("비챤")}
+                >
                   비챤
                 </button>
               </nav>
@@ -301,57 +309,57 @@ const [weekRangeFilter, setWeekRangeFilter] = useState(() => {
             </div>
           </div>
           
-{/* Grouped Video Sections */}
-<div className={styles.groupedVideoSections}>
-  {memberList.map(member => {
-    const memberVideos = groupedData[member];
-    if (!memberVideos || memberVideos.length === 0) return null;
-    
-    return (
-      <div key={member} className={styles.memberSection}>
-        {/* Member Header */}
-        <div className={`${styles.memberHeader} ${styles[`memberHeader${member}`]} ${isDarkMode ? styles.memberHeaderDark : styles.memberHeaderLight}`}>
-          <h3 className={`${styles.koreanFont} ${styles.memberHeaderTitle} ${styles[`memberHeaderTitle${member}`]} ${isDarkMode ? styles.memberHeaderTitleDark : styles.memberHeaderTitleLight}`}>
-            {member === "부가땅" ? "징버거" : member} ({memberVideos.length})
-          </h3>
-        </div>
-        
-        {/* Video Grid for this member */}
-        <div className={styles.videoGrid}>
-          {memberVideos.map((video) => (
-            <div
-              key={video.id}
-              className={`${styles.videoCard} ${isDarkMode ? styles.videoCardDark : styles.videoCardLight}`}
-            >
-              {/* Iframe Container */}
-              <div className={styles.iframeContainer}>
-                <iframe
-                  src={video.iframeUrl}
-                  title={video.title}
-                  className={styles.videoIframe}
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                />
-              </div>
+          {/* Grouped Video Sections */}
+          <div className={styles.groupedVideoSections}>
+            {memberList.map(member => {
+              const memberVideos = groupedData[member];
+              if (!memberVideos || memberVideos.length === 0) return null;
               
-              {/* Video Info */}
-              <div className={styles.videoInfo}>
-                <h3 className={`${styles.videoTitle} ${styles.koreanFont}`}>
-                  {video.title}
-                </h3>
-                <div className={styles.videoMeta}>
-                  <span className={`${styles.koreanFont} ${styles.videoMetaText} ${isDarkMode ? styles.videoMetaTextDark : styles.videoMetaTextLight}`}>
-                    {video.title}
-                  </span>
+              return (
+                <div key={member} className={styles.memberSection}>
+                  {/* Member Header */}
+                  <div className={`${styles.memberHeader} ${styles[`memberHeader${member}`]} ${isDarkMode ? styles.memberHeaderDark : styles.memberHeaderLight}`}>
+                    <h3 className={`${styles.koreanFont} ${styles.memberHeaderTitle} ${styles[`memberHeaderTitle${member}`]} ${isDarkMode ? styles.memberHeaderTitleDark : styles.memberHeaderTitleLight}`}>
+                      {member === "부가땅" ? "징버거" : member} ({memberVideos.length})
+                    </h3>
+                  </div>
+                  
+                  {/* Video Grid for this member */}
+                  <div className={styles.videoGrid}>
+                    {memberVideos.map((video) => (
+                      <div
+                        key={video.id}
+                        className={`${styles.videoCard} ${isDarkMode ? styles.videoCardDark : styles.videoCardLight}`}
+                      >
+                        {/* Iframe Container */}
+                        <div className={styles.iframeContainer}>
+                          <iframe
+                            src={video.iframeUrl}
+                            title={video.title}
+                            className={styles.videoIframe}
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
+                          />
+                        </div>
+                        
+                        {/* Video Info */}
+                        <div className={styles.videoInfo}>
+                          <h3 className={`${styles.videoTitle} ${styles.koreanFont}`}>
+                            {video.title}
+                          </h3>
+                          <div className={styles.videoMeta}>
+                            <span className={`${styles.koreanFont} ${styles.videoMetaText} ${isDarkMode ? styles.videoMetaTextDark : styles.videoMetaTextLight}`}>
+                              {video.title}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    );
-  })}
-</div>
+              );
+            })}
+          </div>
         </main>
 
         {/* Footer */}
