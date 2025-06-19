@@ -1083,3 +1083,137 @@
 .darkMode .memberHeaderTitle비챤 {
   color: #6ee7b7;
 }
+
+/* 데이터 없음 상태 스타일 */
+.emptyStateContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+  margin: 2rem 0;
+}
+
+.emptyStateContainerDark {
+  background-color: rgba(255, 255, 255, 0.02);
+  border-radius: 12px;
+}
+
+.emptyStateContainerLight {
+  background-color: rgba(0, 0, 0, 0.02);
+  border-radius: 12px;
+}
+
+.emptyStateContent {
+  text-align: center;
+  max-width: 500px;
+  padding: 2rem;
+}
+
+.emptyStateIcon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.emptyStateTitle {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.emptyStateTitleDark {
+  color: #e5e7eb;
+}
+
+.emptyStateTitleLight {
+  color: #374151;
+}
+
+.emptyStateDescription {
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+}
+
+.emptyStateDescriptionDark {
+  color: #9ca3af;
+}
+
+.emptyStateDescriptionLight {
+  color: #6b7280;
+}
+
+.emptyStateButton {
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  border: none;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.emptyStateButtonDark {
+  background-color: #3b82f6;
+  color: white;
+}
+
+.emptyStateButtonLight {
+  background-color: #2563eb;
+  color: white;
+}
+
+.emptyStateButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* 로딩 상태 스타일 */
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+  margin: 2rem 0;
+}
+
+.loadingContainerDark {
+  background-color: rgba(255, 255, 255, 0.02);
+  border-radius: 12px;
+}
+
+.loadingContainerLight {
+  background-color: rgba(0, 0, 0, 0.02);
+  border-radius: 12px;
+}
+
+.loadingContent {
+  text-align: center;
+  padding: 2rem;
+}
+
+.loadingSpinner {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.loadingText {
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.loadingTextDark {
+  color: #9ca3af;
+}
+
+.loadingTextLight {
+  color: #6b7280;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}

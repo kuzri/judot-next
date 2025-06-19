@@ -113,6 +113,12 @@ export default function Main() {
     setIsDarkMode(!isDarkMode);
   };
 
+  // 데이터가 있는지 확인하는 함수
+  const hasAnyData = () => {
+    return Object.keys(groupedData).length > 0 && 
+           Object.values(groupedData).some(videos => videos && videos.length > 0);
+  };
+
   // 다크모드 상태를 localStorage에 저장하고 불러오기
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme');
@@ -329,57 +335,97 @@ export default function Main() {
             </div>
           </div>
           
+          {/* 데이터 없음 안내 메시지 */}
+          {originData.length > 0 && !hasAnyData() && (
+            <div className={`${styles.emptyStateContainer} ${isDarkMode ? styles.emptyStateContainerDark : styles.emptyStateContainerLight}`}>
+              <div className={styles.emptyStateContent}>
+                <div className={styles.emptyStateIcon}>🔍</div>
+                <h3 className={`${styles.koreanFont} ${styles.emptyStateTitle} ${isDarkMode ? styles.emptyStateTitleDark : styles.emptyStateTitleLight}`}>
+                  조건에 맞는 데이터가 없습니다
+                </h3>
+                <p className={`${styles.koreanFont} ${styles.emptyStateDescription} ${isDarkMode ? styles.emptyStateDescriptionDark : styles.emptyStateDescriptionLight}`}>
+                  {mem.length > 0 
+                    ? `선택하신 멤버(${mem.join(', ')})의 영상이 해당 기간에 없습니다.` 
+                    : '선택하신 기간에 업로드된 영상이 없습니다.'
+                  }
+                  <br />
+                  다른 기간을 선택하거나 필터를 변경해보세요.
+                </p>
+                <button 
+                  className={`${styles.koreanFont} ${styles.emptyStateButton} ${isDarkMode ? styles.emptyStateButtonDark : styles.emptyStateButtonLight}`}
+                  onClick={selectAll}
+                >
+                  전체 보기
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* 로딩 상태 표시 */}
+          {originData.length === 0 && (
+            <div className={`${styles.loadingContainer} ${isDarkMode ? styles.loadingContainerDark : styles.loadingContainerLight}`}>
+              <div className={styles.loadingContent}>
+                <div className={styles.loadingSpinner}>⏳</div>
+                <p className={`${styles.koreanFont} ${styles.loadingText} ${isDarkMode ? styles.loadingTextDark : styles.loadingTextLight}`}>
+                  데이터를 불러오는 중...
+                </p>
+              </div>
+            </div>
+          )}
+          
           {/* Grouped Video Sections */}
-          <div className={styles.groupedVideoSections}>
-            {memberList.map(member => {
-              const memberVideos = groupedData[member];
-              if (!memberVideos || memberVideos.length === 0) return null;
-              
-              return (
-                <div key={member} className={styles.memberSection}>
-                  {/* Member Header */}
-                  <div className={`${styles.memberHeader} ${styles[`memberHeader${member}`]} ${isDarkMode ? styles.memberHeaderDark : styles.memberHeaderLight}`}>
-                    <h3 className={`${styles.koreanFont} ${styles.memberHeaderTitle} ${styles[`memberHeaderTitle${member}`]} ${isDarkMode ? styles.memberHeaderTitleDark : styles.memberHeaderTitleLight}`}>
-                      {member} ({memberVideos.length})
-                    </h3>
-                  </div>
-                  
-                  {/* Video Grid for this member */}
-                  <div className={styles.videoGrid}>
-                    {memberVideos.map((video) => (
-                      <div
-                        key={video.id}
-                        className={`${styles.videoCard} ${isDarkMode ? styles.videoCardDark : styles.videoCardLight}`}
-                      >
-                        {/* Iframe Container */}
-                        <div className={styles.iframeContainer}>
-                          <iframe
-                            src={video.iframeUrl}
-                            title={video.title}
-                            className={styles.videoIframe}
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                            allowFullScreen
-                          />
-                        </div>
-                        
-                        {/* Video Info */}
-                        <div className={styles.videoInfo}>
-                          <h3 className={`${styles.videoTitle} ${styles.koreanFont}`}>
-                            {video.title}
-                          </h3>
-                          <div className={styles.videoMeta}>
-                            <span className={`${styles.koreanFont} ${styles.videoMetaText} ${isDarkMode ? styles.videoMetaTextDark : styles.videoMetaTextLight}`}>
+          {hasAnyData() && (
+            <div className={styles.groupedVideoSections}>
+              {memberList.map(member => {
+                const memberVideos = groupedData[member];
+                if (!memberVideos || memberVideos.length === 0) return null;
+                
+                return (
+                  <div key={member} className={styles.memberSection}>
+                    {/* Member Header */}
+                    <div className={`${styles.memberHeader} ${styles[`memberHeader${member}`]} ${isDarkMode ? styles.memberHeaderDark : styles.memberHeaderLight}`}>
+                      <h3 className={`${styles.koreanFont} ${styles.memberHeaderTitle} ${styles[`memberHeaderTitle${member}`]} ${isDarkMode ? styles.memberHeaderTitleDark : styles.memberHeaderTitleLight}`}>
+                        {member} ({memberVideos.length})
+                      </h3>
+                    </div>
+                    
+                    {/* Video Grid for this member */}
+                    <div className={styles.videoGrid}>
+                      {memberVideos.map((video) => (
+                        <div
+                          key={video.id}
+                          className={`${styles.videoCard} ${isDarkMode ? styles.videoCardDark : styles.videoCardLight}`}
+                        >
+                          {/* Iframe Container */}
+                          <div className={styles.iframeContainer}>
+                            <iframe
+                              src={video.iframeUrl}
+                              title={video.title}
+                              className={styles.videoIframe}
+                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                              allowFullScreen
+                            />
+                          </div>
+                          
+                          {/* Video Info */}
+                          <div className={styles.videoInfo}>
+                            <h3 className={`${styles.videoTitle} ${styles.koreanFont}`}>
                               {video.title}
-                            </span>
+                            </h3>
+                            <div className={styles.videoMeta}>
+                              <span className={`${styles.koreanFont} ${styles.videoMetaText} ${isDarkMode ? styles.videoMetaTextDark : styles.videoMetaTextLight}`}>
+                                {video.title}
+                              </span>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+          )}
         </main>
 
         {/* Footer */}
