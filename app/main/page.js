@@ -96,6 +96,15 @@ export default function Main() {
     setMem([]);
   };
 
+  // 주간 통계 카드 클릭 핸들러 (새로 추가)
+  const handleStatCardClick = (memberName) => {
+    if (memberName === 'total') {
+      selectAll();
+    } else {
+      toggleMember(memberName);
+    }
+  };
+
   const handleWeekChange = (weekRange) => {
     setWeekRangeFilter(weekRange);
   };
@@ -198,9 +207,9 @@ export default function Main() {
             <div className={styles.headerContent}>
               {/* Logo */}
               <div className={styles.logoContainer}>
-                <div className={`${styles.logo} ${styles.logoFont}`}>
+                <a href='https://judot-next.vercel.app/main'  className={`${styles.logo} ${styles.logoFont}`}>
                   돚하이
-                </div>
+                </a>
               </div>
 
               {/* Navigation */}
@@ -287,7 +296,12 @@ export default function Main() {
               📊 주간 통계
             </h2>
             <div className={styles.statsGrid}>
-              <div className={`${styles.statCard} ${isDarkMode ? styles.statCardDark : styles.statCardLight}`}>
+              <div 
+                className={`${styles.statCard} ${isDarkMode ? styles.statCardDark : styles.statCardLight} ${
+                  mem.length === 0 ? styles.statCardActive : ''
+                } ${styles.statCardClickable}`}
+                onClick={() => handleStatCardClick('total')}
+              >
                 <div className={`${styles.koreanFont} ${styles.statLabel} ${isDarkMode ? styles.statLabelDark : styles.statLabelLight}`}>
                   전체
                 </div>
@@ -297,7 +311,13 @@ export default function Main() {
               </div>
               
               {memberList.map(member => (
-                <div key={member} className={`${styles.statCard} ${isDarkMode ? styles.statCardDark : styles.statCardLight}`}>
+                <div 
+                  key={member} 
+                  className={`${styles.statCard} ${isDarkMode ? styles.statCardDark : styles.statCardLight} ${
+                    mem.includes(member) ? styles[`statCard${member}`] : ''
+                  } ${styles.statCardClickable}`}
+                  onClick={() => handleStatCardClick(member)}
+                >
                   <div className={`${styles.koreanFont} ${styles.statLabel} ${isDarkMode ? styles.statLabelDark : styles.statLabelLight}`}>
                     {member}
                   </div>
@@ -379,16 +399,16 @@ export default function Main() {
                 <div className={styles.footerLinkGroup}>
                   <h3 className={`${styles.koreanFont} ${styles.footerLinkTitle}`}>링크</h3>
                   <ul className={`${styles.koreanFont} ${styles.footerLinkList} ${isDarkMode ? styles.footerLinkListDark : styles.footerLinkListLight}`}>
-                    <li><a href="https://www.youtube.com/@JU_RURU" className={styles.footerLink}>주르르 유튜브</a></li>
-                    <li><a href="https://www.youtube.com/@UnsealedJURURU" className={styles.footerLink}>봉인 풀린 주르르</a></li>
+                    <li><a href="https://www.youtube.com/@JU_RURU" className={styles.footerLink} target="_blank">주르르 유튜브</a></li>
+                    <li><a href="https://www.youtube.com/@UnsealedJURURU" className={styles.footerLink} target="_blank">봉인 풀린 주르르</a></li>
                   </ul>
                 </div>
                 
                 <div className={styles.footerLinkGroup}>
                   <h3 className={`${styles.koreanFont} ${styles.footerLinkTitle}`}>　</h3>
                   <ul className={`${styles.koreanFont} ${styles.footerLinkList} ${isDarkMode ? styles.footerLinkListDark : styles.footerLinkListLight}`}>
-                    <li><a href="https://ch.sooplive.co.kr/cotton1217" className={styles.footerLink}>주르르 생방송</a></li>
-                    <li><a href="https://cafe.naver.com/steamindiegame" className={styles.footerLink}>왁물원</a></li>
+                    <li><a href="https://ch.sooplive.co.kr/cotton1217" className={styles.footerLink} target="_blank">주르르 생방송</a></li>
+                    <li><a href="https://cafe.naver.com/steamindiegame" className={styles.footerLink} target="_blank">왁물원</a></li>
                   </ul>
                 </div>
               </div>
