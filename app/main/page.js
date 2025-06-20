@@ -289,14 +289,14 @@ export default function Main() {
 
               {/* Refresh Button & Dark Mode Toggle */}
               <div className={styles.headerActions}>
-                <button
+                {/* <button
                   onClick={refreshData}
                   disabled={isLoading}
                   className={`${styles.refreshButton} ${isDarkMode ? styles.refreshButtonDark : styles.refreshButtonLight}`}
                   aria-label="데이터 새로고침"
                 >
                   {isLoading ? '⏳' : '🔄'}
-                </button>
+                </button> */}
                 <button
                   onClick={toggleDarkMode}
                   className={`${styles.toggleButton} ${isDarkMode ? styles.toggleButtonDark : styles.toggleButtonLight}`}
