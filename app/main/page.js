@@ -1,31 +1,26 @@
 'use client';
 // pages/index.js
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import Head from 'next/head';
 import Image from 'next/image';
 import styles from './page.module.css';
-import { db } from "../lib/firebaseConfig";
-import { collection, query, orderBy, getDocs } from "firebase/firestore";
+import { firebaseService } from '../services/firebaseService';
+import { useDataCache } from '../hooks/useDataCache';
 import WeeklyFilter from '../component/WeeklyFilter';
 
 export default function Main() {
-  // const [data, setData] = useState([]);
   const [originData, setOriginData] = useState([]);
   const [mem, setMem] = useState([]);
-  const [weeklyStats, setWeeklyStats] = useState({});
-  const [groupedData, setGroupedData] = useState({});
-  
-  // 초기값 설정 - 현재 주의 시작일과 끝일
   const [weekRangeFilter, setWeekRangeFilter] = useState(() => {
     const now = new Date();
-    const day = now.getDay(); // 0(일) ~ 6(토)
+    const day = now.getDay();
     const mondayOffset = day === 0 ? -6 : 1 - day;
 
     const startOfWeek = new Date(now);
-    startOfWeek.setDate(now.getDate() + mondayOffset); // 월요일
+    startOfWeek.setDate(now.getDate() + mondayOffset);
 
     const endOfWeek = new Date(startOfWeek);
-    endOfWeek.setDate(startOfWeek.getDate() + 6); // 일요일
+    endOfWeek.setDate(startOfWeek.getDate() + 6);
 
     const formatDate = (date) => date.toISOString().split('T')[0];
 
@@ -36,14 +31,27 @@ export default function Main() {
   });
 
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // 멤버 리스트 정의
-  const memberList = ["아이네", "징버거", "릴파", "고세구", "비챤"];
+  // 데이터 캐시 훅 사용
+  const { cachedData, setCacheData, isCacheValid, invalidateCache } = useDataCache();
 
-  // 주간 통계 계산 함수
-  const calculateWeeklyStats = (dataToAnalyze) => {
+  // 멤버 리스트를 상수로 정의 (리렌더링 방지)
+  const memberList = useMemo(() => ["아이네", "징버거", "릴파", "고세구", "비챤"], []);
+
+  // 주간 통계 계산 함수를 useMemo로 메모이제이션
+  const weeklyStats = useMemo(() => {
+    if (originData.length === 0) return { total: 0, members: {} };
+
+    // 주간 필터링
+    const weeklyFilteredData = originData.filter(item => 
+      item.uploadedDate >= weekRangeFilter.start && 
+      item.uploadedDate <= weekRangeFilter.end
+    );
+
     const stats = {
-      total: dataToAnalyze.length,
+      total: weeklyFilteredData.length,
       members: {}
     };
 
@@ -53,36 +61,46 @@ export default function Main() {
     });
 
     // 데이터를 순회하며 각 멤버별 카운트
-    dataToAnalyze.forEach(item => {
-      memberList.forEach(member => {
-        if (item.member && item.member === member) {
-          stats.members[member]++;
-        }
-      });
+    weeklyFilteredData.forEach(item => {
+      if (item.member && memberList.includes(item.member)) {
+        stats.members[item.member]++;
+      }
     });
 
     return stats;
-  };
+  }, [originData, weekRangeFilter, memberList]);
 
-  // 멤버별로 데이터 그룹화하는 함수
-  const groupDataByMember = (dataToGroup) => {
-    const grouped = {};
-    
-    memberList.forEach(member => {
-      const memberVideos = dataToGroup.filter(item => 
-        item.member && item.member === member
+  // 그룹화된 데이터를 useMemo로 메모이제이션
+  const groupedData = useMemo(() => {
+    if (originData.length === 0) return {};
+
+    // 주간 필터링
+    let filteredData = originData.filter(item => 
+      item.uploadedDate >= weekRangeFilter.start && 
+      item.uploadedDate <= weekRangeFilter.end
+    );
+
+    // 멤버 필터링
+    if (mem.length > 0) {
+      filteredData = filteredData.filter(item => 
+        mem.includes(item.member)
       );
-      
+    }
+
+    // 멤버별 그룹화
+    const grouped = {};
+    memberList.forEach(member => {
+      const memberVideos = filteredData.filter(item => item.member === member);
       if (memberVideos.length > 0) {
         grouped[member] = memberVideos;
       }
     });
-    
-    return grouped;
-  };
 
-  // 멤버 토글 함수
-  const toggleMember = (memberName) => {
+    return grouped;
+  }, [originData, mem, weekRangeFilter, memberList]);
+
+  // 콜백 함수들을 useCallback으로 메모이제이션
+  const toggleMember = useCallback((memberName) => {
     setMem(prevMem => {
       if (prevMem.includes(memberName)) {
         return prevMem.filter(name => name !== memberName);
@@ -90,69 +108,82 @@ export default function Main() {
         return [...prevMem, memberName];
       }
     });
-  };
+  }, []);
 
-  // 전체 선택 함수
-  const selectAll = () => {
+  const selectAll = useCallback(() => {
     setMem([]);
-  };
+  }, []);
 
-  // 이번 주로 이동하는 함수 (새로 추가)
-  const goToThisWeek = () => {
+  const goToThisWeek = useCallback(() => {
     const now = new Date();
-    const day = now.getDay(); // 0(일) ~ 6(토)
+    const day = now.getDay();
     const mondayOffset = day === 0 ? -6 : 1 - day;
 
     const startOfWeek = new Date(now);
-    startOfWeek.setDate(now.getDate() + mondayOffset); // 월요일
+    startOfWeek.setDate(now.getDate() + mondayOffset);
 
     const endOfWeek = new Date(startOfWeek);
-    endOfWeek.setDate(startOfWeek.getDate() + 6); // 일요일
+    endOfWeek.setDate(startOfWeek.getDate() + 6);
 
     const formatDate = (date) => date.toISOString().split('T')[0];
 
-    const thisWeekRange = {
+    setWeekRangeFilter({
       start: formatDate(startOfWeek),
       end: formatDate(endOfWeek)
-    };
+    });
+  }, []);
 
-    setWeekRangeFilter(thisWeekRange);
-  };
-
-  // 주간 통계 카드 클릭 핸들러 (새로 추가)
-  const handleStatCardClick = (memberName) => {
+  const handleStatCardClick = useCallback((memberName) => {
     if (memberName === 'total') {
       selectAll();
     } else {
       toggleMember(memberName);
     }
-  };
+  }, [selectAll, toggleMember]);
 
-  const handleWeekChange = (weekRange) => {
+  const handleWeekChange = useCallback((weekRange) => {
     setWeekRangeFilter(weekRange);
-  };
+  }, []);
 
-  const toggleDarkMode = () => {
-    setIsDarkMode(!isDarkMode);
-  };
+  const toggleDarkMode = useCallback(() => {
+    setIsDarkMode(prev => !prev);
+  }, []);
 
-  // 데이터가 있는지 확인하는 함수
-  const hasAnyData = () => {
+  // 데이터 새로고침 함수
+  const refreshData = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      
+      // 캐시 무효화 후 새 데이터 가져오기
+      const freshData = await firebaseService.fetchScrapedLinks(false);
+      setOriginData(freshData);
+      setCacheData(freshData);
+    } catch (error) {
+      console.error('데이터 새로고침 실패:', error);
+      setError('데이터를 새로고침하는데 실패했습니다.');
+    } finally {
+      setIsLoading(false);
+    }
+  }, [setCacheData]);
+
+  // 데이터 존재 여부 확인을 useMemo로 메모이제이션
+  const hasAnyData = useMemo(() => {
     return Object.keys(groupedData).length > 0 && 
            Object.values(groupedData).some(videos => videos && videos.length > 0);
-  };
+  }, [groupedData]);
 
-  // 다크모드 상태를 localStorage에 저장하고 불러오기
+  // 다크모드 초기화 (한 번만 실행)
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme) {
       setIsDarkMode(savedTheme === 'dark');
     } else {
-      // 시스템 테마 감지
       setIsDarkMode(window.matchMedia('(prefers-color-scheme: dark)').matches);
     }
   }, []);
 
+  // 다크모드 변경시 localStorage 업데이트
   useEffect(() => {
     localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
     if (isDarkMode) {
@@ -162,59 +193,50 @@ export default function Main() {
     }
   }, [isDarkMode]);
 
-  // Firebase에서 데이터 가져오기
+  // Firebase 데이터 fetch (캐시 우선 적용)
   useEffect(() => {
+    let isMounted = true;
+    
     const fetchData = async () => {
-      const querySnapshot = await getDocs(
-        query(collection(db, "scraped_links"), orderBy("uploadedDate", "asc"))
-      );
-      
-      const docs = querySnapshot.docs
-        .map((doc) => ({ id: doc.id, ...doc.data() }))
-        .map(doc => ({
-          iframeUrl: `${doc.href}/embed?autoPlay=false&mutePlay=false&showChat=false`, 
-          ...doc
-        }));
-      
-      setOriginData(docs);
+      try {
+        setIsLoading(true);
+        setError(null);
+        
+        // 유효한 캐시가 있는 경우 캐시 데이터 사용
+        if (cachedData && isCacheValid()) {
+          setOriginData(cachedData);
+          setIsLoading(false);
+          return;
+        }
+        
+        // 캐시가 없거나 유효하지 않은 경우 Firebase에서 데이터 가져오기
+        const data = await firebaseService.fetchScrapedLinks();
+        
+        if (!isMounted) return;
+        
+        setOriginData(data);
+        setCacheData(data);
+      } catch (error) {
+        console.error('데이터 fetch 실패:', error);
+        setError('데이터를 불러오는데 실패했습니다.');
+        
+        // 에러 발생시 캐시된 데이터라도 사용
+        if (cachedData && !isMounted) {
+          setOriginData(cachedData);
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      }
     };
     
     fetchData();
-  }, []);
-
-  // 필터링 로직과 주간 통계 계산을 통합한 useEffect
-  useEffect(() => {
-    // originData가 없으면 아직 로딩 중이므로 필터링하지 않음
-    if (originData.length === 0) {
-      return;
-    }
-
-    // 주간 필터링 먼저 적용 (통계 계산을 위해)
-    let weeklyFilteredData = originData;
-    if (weekRangeFilter.start && weekRangeFilter.end) {
-      weeklyFilteredData = originData.filter(item => 
-        item.uploadedDate >= weekRangeFilter.start && 
-        item.uploadedDate <= weekRangeFilter.end
-      );
-    }
-
-    // 주간 통계 계산 (멤버 필터링 전 데이터로)
-    const stats = calculateWeeklyStats(weeklyFilteredData);
-    setWeeklyStats(stats);
-
-    // 멤버 필터링 적용
-    if (mem.length > 0) {
-      weeklyFilteredData = weeklyFilteredData.filter(item => 
-        mem.some(memberName => item.member ===memberName)
-      );
-    }
-
-    // setData(weeklyFilteredData);
     
-    // 멤버별로 데이터 그룹화
-    const grouped = groupDataByMember(weeklyFilteredData);
-    setGroupedData(grouped);
-  }, [originData, mem, weekRangeFilter]);
+    return () => {
+      isMounted = false;
+    };
+  }, [cachedData, isCacheValid, setCacheData]);
 
   return (
     <>
@@ -251,56 +273,37 @@ export default function Main() {
                 >
                   전체
                 </button>
-                <button 
-                  className={`${styles.navButton} ${styles.koreanFont} ${
-                    mem.includes("아이네") ? styles.navButtonIne : ''
-                  }`} 
-                  onClick={() => toggleMember("아이네")}
-                >
-                  아이네
-                </button>
-                <button 
-                  className={`${styles.navButton} ${styles.koreanFont} ${
-                    mem.includes("징버거") ? styles.navButtonBugat : ''
-                  }`} 
-                  onClick={() => toggleMember("징버거")}
-                >
-                  징버거
-                </button>
-                <button 
-                  className={`${styles.navButton} ${styles.koreanFont} ${
-                    mem.includes("릴파") ? styles.navButtonLilpa : ''
-                  }`} 
-                  onClick={() => toggleMember("릴파")}
-                >
-                  릴파
-                </button>
-                <button 
-                  className={`${styles.navButton} ${styles.koreanFont} ${
-                    mem.includes("고세구") ? styles.navButtonGosegu : ''
-                  }`} 
-                  onClick={() => toggleMember("고세구")}
-                >
-                  고세구
-                </button>
-                <button 
-                  className={`${styles.navButton} ${styles.koreanFont} ${
-                    mem.includes("비챤") ? styles.navButtonVIichan : ''
-                  }`} 
-                  onClick={() => toggleMember("비챤")}
-                >
-                  비챤
-                </button>
+                {memberList.map(member => (
+                  <button 
+                    key={member}
+                    className={`${styles.navButton} ${styles.koreanFont} ${
+                      mem.includes(member) ? styles[`navButton${member}`] : ''
+                    }`} 
+                    onClick={() => toggleMember(member)}
+                  >
+                    {member}
+                  </button>
+                ))}
               </nav>
 
-              {/* Dark Mode Toggle */}
-              <button
-                onClick={toggleDarkMode}
-                className={`${styles.toggleButton} ${isDarkMode ? styles.toggleButtonDark : styles.toggleButtonLight}`}
-                aria-label="다크모드 토글"
-              >
-                {isDarkMode ? '☀️' : '🌙'}
-              </button>
+              {/* Refresh Button & Dark Mode Toggle */}
+              <div className={styles.headerActions}>
+                <button
+                  onClick={refreshData}
+                  disabled={isLoading}
+                  className={`${styles.refreshButton} ${isDarkMode ? styles.refreshButtonDark : styles.refreshButtonLight}`}
+                  aria-label="데이터 새로고침"
+                >
+                  {isLoading ? '⏳' : '🔄'}
+                </button>
+                <button
+                  onClick={toggleDarkMode}
+                  className={`${styles.toggleButton} ${isDarkMode ? styles.toggleButtonDark : styles.toggleButtonLight}`}
+                  aria-label="다크모드 토글"
+                >
+                  {isDarkMode ? '☀️' : '🌙'}
+                </button>
+              </div>
             </div>
           </div>
         </header>
@@ -317,7 +320,31 @@ export default function Main() {
               onWeekChange={handleWeekChange} 
               initialWeekRange={weekRangeFilter}
             />
+            {/* 캐시 상태 표시 */}
+            {cachedData && isCacheValid() && !isLoading && (
+              <div className={`${styles.cacheStatus} ${isDarkMode ? styles.cacheStatusDark : styles.cacheStatusLight}`}>
+                <span className={styles.koreanFont}>
+                  💾 캐시된 데이터 사용 중 (최신 업데이트: {new Date().toLocaleTimeString()})
+                </span>
+              </div>
+            )}
           </div>
+
+          {/* 에러 상태 표시 */}
+          {error && (
+            <div className={`${styles.errorContainer} ${isDarkMode ? styles.errorContainerDark : styles.errorContainerLight}`}>
+              <div className={styles.errorContent}>
+                <span className={styles.errorIcon}>⚠️</span>
+                <p className={`${styles.koreanFont} ${styles.errorText}`}>{error}</p>
+                <button 
+                  className={`${styles.koreanFont} ${styles.retryButton}`}
+                  onClick={refreshData}
+                >
+                  다시 시도
+                </button>
+              </div>
+            </div>
+          )}
 
           {/* 주간 통계 섹션 */}
           <div className={`${styles.weeklyStatsSection} ${isDarkMode ? styles.weeklyStatsSectionDark : styles.weeklyStatsSectionLight}`}>
@@ -359,7 +386,7 @@ export default function Main() {
           </div>
           
           {/* 데이터 없음 안내 메시지 */}
-          {originData.length > 0 && !hasAnyData() && (
+          {!isLoading && originData.length > 0 && !hasAnyData && (
             <div className={`${styles.emptyStateContainer} ${isDarkMode ? styles.emptyStateContainerDark : styles.emptyStateContainerLight}`}>
               <div className={styles.emptyStateContent}>
                 <div className={styles.emptyStateIcon}>
@@ -401,7 +428,7 @@ export default function Main() {
           )}
 
           {/* 로딩 상태 표시 */}
-          {originData.length === 0 && (
+          {isLoading && (
             <div className={`${styles.loadingContainer} ${isDarkMode ? styles.loadingContainerDark : styles.loadingContainerLight}`}>
               <div className={styles.loadingContent}>
                 <div className={styles.loadingSpinner}>⏳</div>
@@ -413,7 +440,7 @@ export default function Main() {
           )}
           
           {/* Grouped Video Sections */}
-          {hasAnyData() && (
+          {hasAnyData && (
             <div className={styles.groupedVideoSections}>
               {memberList.map(member => {
                 const memberVideos = groupedData[member];
@@ -443,6 +470,7 @@ export default function Main() {
                               className={styles.videoIframe}
                               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                               allowFullScreen
+                              loading="lazy"
                             />
                           </div>
                           
