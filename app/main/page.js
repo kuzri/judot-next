@@ -35,7 +35,8 @@ export default function Main() {
   const [error, setError] = useState(null);
 
   // 데이터 캐시 훅 사용
-  const { cachedData, setCacheData, isCacheValid, invalidateCache } = useDataCache();
+  // const { cachedData, setCacheData, isCacheValid, invalidateCache } = useDataCache();
+  const { cachedData, setCacheData, isCacheValid } = useDataCache();
 
   // 멤버 리스트를 상수로 정의 (리렌더링 방지)
   const memberList = useMemo(() => ["아이네", "징버거", "릴파", "고세구", "비챤"], []);
