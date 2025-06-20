@@ -2,6 +2,7 @@
 // pages/index.js
 import { useState, useEffect } from 'react';
 import Head from 'next/head';
+import Image from 'next/image';
 import styles from './page.module.css';
 import { db } from "../lib/firebaseConfig";
 import { collection, query, orderBy, getDocs } from "firebase/firestore";
@@ -94,6 +95,28 @@ export default function Main() {
   // 전체 선택 함수
   const selectAll = () => {
     setMem([]);
+  };
+
+  // 이번 주로 이동하는 함수 (새로 추가)
+  const goToThisWeek = () => {
+    const now = new Date();
+    const day = now.getDay(); // 0(일) ~ 6(토)
+    const mondayOffset = day === 0 ? -6 : 1 - day;
+
+    const startOfWeek = new Date(now);
+    startOfWeek.setDate(now.getDate() + mondayOffset); // 월요일
+
+    const endOfWeek = new Date(startOfWeek);
+    endOfWeek.setDate(startOfWeek.getDate() + 6); // 일요일
+
+    const formatDate = (date) => date.toISOString().split('T')[0];
+
+    const thisWeekRange = {
+      start: formatDate(startOfWeek),
+      end: formatDate(endOfWeek)
+    };
+
+    setWeekRangeFilter(thisWeekRange);
   };
 
   // 주간 통계 카드 클릭 핸들러 (새로 추가)
@@ -339,7 +362,15 @@ export default function Main() {
           {originData.length > 0 && !hasAnyData() && (
             <div className={`${styles.emptyStateContainer} ${isDarkMode ? styles.emptyStateContainerDark : styles.emptyStateContainerLight}`}>
               <div className={styles.emptyStateContent}>
-                <div className={styles.emptyStateIcon}>🔍</div>
+                <div className={styles.emptyStateIcon}>
+                  <Image
+                    src="/juDot.png"
+                    alt="juDot"
+                    width={80}
+                    height={80}
+                    className={styles.emptyStateImage}
+                  />
+                </div>
                 <h3 className={`${styles.koreanFont} ${styles.emptyStateTitle} ${isDarkMode ? styles.emptyStateTitleDark : styles.emptyStateTitleLight}`}>
                   조건에 맞는 데이터가 없습니다
                 </h3>
@@ -351,12 +382,20 @@ export default function Main() {
                   <br />
                   다른 기간을 선택하거나 필터를 변경해보세요.
                 </p>
-                <button 
-                  className={`${styles.koreanFont} ${styles.emptyStateButton} ${isDarkMode ? styles.emptyStateButtonDark : styles.emptyStateButtonLight}`}
-                  onClick={selectAll}
-                >
-                  전체 보기
-                </button>
+                <div className={styles.emptyStateButtons}>
+                  <button 
+                    className={`${styles.koreanFont} ${styles.emptyStateButton} ${isDarkMode ? styles.emptyStateButtonDark : styles.emptyStateButtonLight}`}
+                    onClick={selectAll}
+                  >
+                    전체 보기
+                  </button>
+                  <button 
+                    className={`${styles.koreanFont} ${styles.emptyStateButton} ${styles.emptyStateButtonThisWeek} ${isDarkMode ? styles.emptyStateButtonDark : styles.emptyStateButtonLight}`}
+                    onClick={goToThisWeek}
+                  >
+                    이번 주로 이동
+                  </button>
+                </div>
               </div>
             </div>
           )}

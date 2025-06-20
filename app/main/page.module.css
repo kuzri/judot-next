@@ -1217,3 +1217,85 @@
     opacity: 0.5;
   }
 }
+.emptyStateButtons {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.emptyStateButton {
+  background-color: #ffc0cb; /* 연분홍색 */
+  border: none;
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-size: 14px;
+  font-weight:600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #c71585; /* 깊은 핑크 계열 */
+}
+
+.emptyStateButton:hover {
+  background-color: #ffb6c1; /* 호버 시 조금 더 진한 연분홍색 */
+  transform: translateY(-1px);
+  color: #b91570; /* 호버 시 더 진한 깊은 핑크 */
+}
+
+.emptyStateButtonDark {
+  background-color: #ffc0cb;
+  color: #c71585; /* 라이트 모드와 동일한 깊은 핑크 */
+}
+
+.emptyStateButtonDark:hover {
+  background-color: #ffb6c1;
+  color: #b91570;
+}
+
+/* EmptyStateImage CSS Styles */
+.emptyStateIcon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.emptyStateImage {
+  width: 120px;
+  height: 120px;
+  object-fit: contain;
+  transition: all 0.3s ease;
+  border-radius: 16px;
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.1));
+  display: block;
+  margin: 0 auto;
+}
+
+.emptyStateImage:hover {
+  transform: scale(1.05);
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.15));
+}
+
+/* 다크 모드에서의 스타일 */
+.darkMode .emptyStateImage {
+  filter: drop-shadow(0 6px 12px rgba(255, 255, 255, 0.1));
+}
+
+.darkMode .emptyStateImage:hover {
+  filter: drop-shadow(0 8px 16px rgba(255, 255, 255, 0.2));
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .emptyStateImage {
+    width: 100px;
+    height: 100px;
+  }
+}
+
+@media (max-width: 480px) {
+  .emptyStateImage {
+    width: 80px;
+    height: 80px;
+  }
+}

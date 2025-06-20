@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
-const WeeklyFilter = ({ onWeekChange }) => {
+const WeeklyFilter = ({ onWeekChange, initialWeekRange }) => {
   // 오늘 날짜를 기준으로 현재 주의 시작일과 끝일 계산
   const getWeekRange = (date) => {
     const current = new Date(date);
@@ -25,9 +25,28 @@ const WeeklyFilter = ({ onWeekChange }) => {
     return getWeekRange(today);
   };
 
+  // initialWeekRange를 Date 객체로 변환하는 함수
+  const stringToDateRange = (range) => {
+    if (!range || !range.start || !range.end) {
+      return getCurrentWeek();
+    }
+    return {
+      start: new Date(range.start),
+      end: new Date(range.end)
+    };
+  };
+
   const [currentWeek, setCurrentWeek] = useState(() => {
-    return getCurrentWeek();
+    return initialWeekRange ? stringToDateRange(initialWeekRange) : getCurrentWeek();
   });
+
+  // initialWeekRange가 변경될 때 currentWeek 업데이트
+  useEffect(() => {
+    if (initialWeekRange) {
+      const newWeek = stringToDateRange(initialWeekRange);
+      setCurrentWeek(newWeek);
+    }
+  }, [initialWeekRange]);
 
   // 오늘이 포함된 주 정보
   const thisWeek = getCurrentWeek();
@@ -118,11 +137,7 @@ const WeeklyFilter = ({ onWeekChange }) => {
         이전 주
       </button>
 
-      <div className={`text-center px-4 py-2 rounded-lg transition-all ${
-        isCurrentWeekSelected() 
-          ? 'bg-blue-50 border-2 border-blue-200 text-blue-800' 
-          : 'text-gray-700'
-      }`}>
+      <div className={`text-center px-4 py-2 rounded-lg transition-all ${'bg-blue-50 border-2 border-blue-200 text-blue-800' }`}> 
         <span className="text-sm font-medium">
           {formatDate(currentWeek.start)} ~ {formatDate(currentWeek.end)}
         </span>
