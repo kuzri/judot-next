@@ -321,13 +321,13 @@ export default function Main() {
               initialWeekRange={weekRangeFilter}
             />
             {/* 캐시 상태 표시 */}
-            {cachedData && isCacheValid() && !isLoading && (
+            {/* {cachedData && isCacheValid() && !isLoading && (
               <div className={`${styles.cacheStatus} ${isDarkMode ? styles.cacheStatusDark : styles.cacheStatusLight}`}>
                 <span className={styles.koreanFont}>
                   💾 캐시된 데이터 사용 중 (최신 업데이트: {new Date().toLocaleTimeString()})
                 </span>
               </div>
-            )}
+            )} */}
           </div>
 
           {/* 에러 상태 표시 */}
