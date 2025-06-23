@@ -243,7 +243,7 @@ export default function Main() {
     <>
       <Head>
         <title>돚하이</title>
-        <meta name="description" content="돚하돚하이" />
+        <meta name="description" content="돚하이" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="true" />
         <link 

@@ -67,7 +67,7 @@ class FirebaseService {
     try {
       let baseQuery = query(
         collection(db, "scraped_links"), 
-        orderBy("uploadedDate", "desc"),
+        orderBy("uploadedDate", "asc"),
         limit(pageSize)
       );
 
