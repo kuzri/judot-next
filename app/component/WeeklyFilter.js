@@ -143,7 +143,7 @@ const WeeklyFilter = ({ onWeekChange, initialWeekRange }) => {
         </span>
         {isCurrentWeekSelected() && (
           <span className="ml-2 px-2 py-1 bg-blue-500 text-white text-xs rounded-full">
-            현재
+            이번 주
           </span>
         )}
       </div>
