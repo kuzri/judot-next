@@ -9,6 +9,11 @@ import { useDataCache } from '../hooks/useDataCache';
 import WeeklyFilter from '../component/WeeklyFilter';
 
 export default function Main() {
+  // 'YYYY-MM-DD' 형식으로 현지 시간 반환
+  const formatDate = (date) => {
+    return date.toLocaleDateString('ko-CA'); 
+  };
+
   const [originData, setOriginData] = useState([]);
   const [mem, setMem] = useState([]);
   const [weekRangeFilter, setWeekRangeFilter] = useState(() => {
@@ -22,7 +27,7 @@ export default function Main() {
     const endOfWeek = new Date(startOfWeek);
     endOfWeek.setDate(startOfWeek.getDate() + 6);
 
-    const formatDate = (date) => date.toISOString().split('T')[0];
+    // const formatDate = (date) => date.toISOString().split('T')[0];
 
     return {
       start: formatDate(startOfWeek),
@@ -125,9 +130,9 @@ export default function Main() {
 
     const endOfWeek = new Date(startOfWeek);
     endOfWeek.setDate(startOfWeek.getDate() + 6);
-    const formatDate = (date) => {
-      return date.toLocaleDateString('ko-CA'); // 'YYYY-MM-DD' 형식으로 현지 시간 반환
-    };
+
+    // const formatDate = (date) => date.toISOString().split('T')[0];
+
     setWeekRangeFilter({
       start: formatDate(startOfWeek),
       end: formatDate(endOfWeek)
