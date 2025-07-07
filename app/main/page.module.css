@@ -1,4 +1,4 @@
-/* page.module.css - Optimized CSS Modules with Sidebar */
+/* page.module.css - Optimized CSS Modules (헤더/푸터 분리) */
 
 /* =========================================
    폰트 및 기본 설정
@@ -15,12 +15,6 @@
   letter-spacing: -0.01em;
   word-break: keep-all;
   line-height: 1.6;
-}
-
-.logoFont {
-  font-family: 'Inter', 'Pretendard', sans-serif;
-  font-weight: 700;
-  letter-spacing: -0.02em;
 }
 
 .heroFont {
@@ -46,326 +40,6 @@
 .darkMode {
   background-color: #111827;
   color: #ffffff;
-}
-
-/* =========================================
-   사이드바
-   ========================================= */
-.sidebarBackdrop {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 100;
-  backdrop-filter: blur(4px);
-}
-
-.sidebar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 100vh;
-  width: 280px;
-  z-index: 101;
-  transition: transform 0.3s ease;
-  display: flex;
-  flex-direction: column;
-  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-}
-
-.sidebarOpen {
-  transform: translateX(0);
-}
-
-.sidebarClosed {
-  transform: translateX(-100%);
-}
-
-.sidebarLight {
-  background-color: #ffffff;
-  border-right: 1px solid #e5e7eb;
-}
-
-.sidebarDark {
-  background-color: #1f2937;
-  border-right: 1px solid #374151;
-}
-
-.sidebarHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem 1.5rem;
-  border-bottom: 1px solid #e5e7eb;
-}
-
-.sidebarTitle {
-  font-size: 1.25rem;
-  font-weight: 600;
-  margin: 0;
-}
-
-.sidebarCloseButton {
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  cursor: pointer;
-  padding: 0.25rem;
-  border-radius: 0.25rem;
-  color: inherit;
-  transition: background-color 0.2s ease;
-}
-
-.sidebarCloseButton:hover {
-  background-color: rgba(0, 0, 0, 0.1);
-}
-
-.sidebarNavigation {
-  flex: 1;
-  padding: 1rem 0;
-  overflow-y: auto;
-}
-
-.sidebarNavButton {
-  display: block;
-  width: 100%;
-  text-align: left;
-  padding: 0.75rem 1.5rem;
-  border: none;
-  background: none;
-  cursor: pointer;
-  font-size: 1rem;
-  font-weight: 500;
-  color: inherit;
-  transition: all 0.2s ease;
-  border-left: 3px solid transparent;
-}
-
-.sidebarNavButton:hover {
-  background-color: rgba(236, 72, 153, 0.1);
-  color: #ec4899;
-}
-
-.sidebarNavButtonActive {
-  color: #ec4899;
-  background-color: rgba(236, 72, 153, 0.1);
-  border-left-color: #ec4899;
-}
-
-/* 사이드바 멤버별 스타일 */
-.sidebarNavButtonIne {
-  color: #7c3aed;
-  background-color: rgba(124, 58, 237, 0.1);
-  border-left-color: #7c3aed;
-}
-
-.sidebarNavButtonBugat {
-  color: #d97706;
-  background-color: rgba(217, 119, 6, 0.1);
-  border-left-color: #d97706;
-}
-
-.sidebarNavButtonLilpa {
-  color: #4f46e5;
-  background-color: rgba(79, 70, 229, 0.1);
-  border-left-color: #4f46e5;
-}
-
-.sidebarNavButtonGosegu {
-  color: #2563eb;
-  background-color: rgba(37, 99, 235, 0.1);
-  border-left-color: #2563eb;
-}
-
-.sidebarNavButtonVIichan {
-  color: #059669;
-  background-color: rgba(5, 150, 105, 0.1);
-  border-left-color: #059669;
-}
-
-.sidebarFooter {
-  padding: 1rem 1.5rem;
-  border-top: 1px solid #e5e7eb;
-}
-
-.sidebarToggleButton {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  width: 100%;
-  padding: 0.75rem 1rem;
-  border: none;
-  border-radius: 0.5rem;
-  cursor: pointer;
-  font-size: 0.875rem;
-  font-weight: 500;
-  transition: all 0.2s ease;
-}
-
-.sidebarToggleButtonLight {
-  background-color: #f3f4f6;
-  color: #374151;
-}
-
-.sidebarToggleButtonDark {
-  background-color: #374151;
-  color: #f9fafb;
-}
-
-.sidebarToggleButton:hover {
-  transform: scale(1.02);
-}
-
-/* =========================================
-   헤더
-   ========================================= */
-.header {
-  backdrop-filter: blur(12px);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  border-bottom: 1px solid;
-  position: sticky;
-  top: 0;
-  z-index: 50;
-}
-
-.headerLight {
-  background-color: rgba(255, 255, 255, 0.95);
-  border-bottom-color: #e5e7eb;
-}
-
-.headerDark {
-  background-color: rgba(31, 41, 55, 0.95);
-  border-bottom-color: #374151;
-}
-
-.headerContainer {
-  max-width: 80rem;
-  margin: 0 auto;
-  padding: 0 1rem;
-}
-
-.headerContent {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  height: 4rem;
-}
-
-.logo {
-  font-size: 1.5rem;
-  font-weight: bold;
-  background: linear-gradient(45deg, #ec4899, #f472b6, #f9a8d4);
-  background-size: 200% 200%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: gradientShift 4s ease infinite;
-}
-
-/* =========================================
-   네비게이션 (데스크톱)
-   ========================================= */
-.navigation {
-  display: none;
-  gap: 1rem;
-}
-
-.navButton {
-  font-weight: 500;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0.5rem 0.75rem;
-  border-radius: 0.375rem;
-  transition: all 0.3s ease;
-  color: inherit;
-  position: relative;
-}
-
-.navButton:hover {
-  color: #ec4899;
-}
-
-.navButtonActive {
-  color: #ec4899;
-  background-color: rgba(236, 72, 153, 0.1);
-}
-
-/* 멤버별 스타일 */
-.navButtonIne { color: #7c3aed; background-color: rgba(124, 58, 237, 0.1); }
-.navButtonBugat { color: #d97706; background-color: rgba(217, 119, 6, 0.1); }
-.navButtonLilpa { color: #4f46e5; background-color: rgba(79, 70, 229, 0.1); }
-.navButtonGosegu { color: #2563eb; background-color: rgba(37, 99, 235, 0.1); }
-.navButtonVIichan { color: #059669; background-color: rgba(5, 150, 105, 0.1); }
-
-.headerActions {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-}
-
-/* =========================================
-   햄버거 메뉴 버튼
-   ========================================= */
-.hamburgerButton {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 2.5rem;
-  height: 2.5rem;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0.5rem;
-  border-radius: 0.375rem;
-  gap: 3px;
-  transition: all 0.3s ease;
-}
-
-.hamburgerButtonLight {
-  background-color: #f3f4f6;
-}
-
-.hamburgerButtonDark {
-  background-color: #374151;
-}
-
-.hamburgerButton:hover {
-  transform: scale(1.05);
-}
-
-.hamburgerLine {
-  width: 20px;
-  height: 2px;
-  background-color: currentColor;
-  transition: all 0.3s ease;
-  border-radius: 1px;
-}
-
-.toggleButton {
-  padding: 0.5rem;
-  border-radius: 50%;
-  border: none;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-}
-
-.toggleButtonLight {
-  background-color: #1f2937;
-  color: #fbbf24;
-}
-
-.toggleButtonDark {
-  background-color: #fbbf24;
-  color: #1f2937;
-}
-
-.toggleButton:hover {
-  transform: scale(1.1);
 }
 
 /* =========================================
@@ -772,115 +446,8 @@
 }
 
 /* =========================================
-   푸터
-   ========================================= */
-.footer {
-  margin-top: 5rem;
-  border-top: 1px solid;
-  padding: 3rem 1rem;
-}
-
-.footerLight {
-  background-color: #f9fafb;
-  border-top-color: #e5e7eb;
-}
-
-.footerDark {
-  background-color: #1f2937;
-  border-top-color: #374151;
-}
-
-.footerContainer {
-  max-width: 80rem;
-  margin: 0 auto;
-}
-
-.footerContent {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 2rem;
-}
-
-.footerLogo {
-  font-size: 1.5rem;
-  font-weight: bold;
-  background: linear-gradient(45deg, #ec4899, #f472b6);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  margin-bottom: 1rem;
-}
-
-.footerDescription {
-  margin-bottom: 1rem;
-  max-width: 28rem;
-  font-weight: 300;
-  line-height: 1.625;
-}
-
-.footerDescriptionLight { color: #4b5563; }
-.footerDescriptionDark { color: #9ca3af; }
-
-.footerLinks {
-  display: flex;
-  gap: 2rem;
-}
-
-.footerLinkTitle {
-  font-weight: 600;
-  margin-bottom: 1rem;
-}
-
-.footerLinkList {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  font-weight: 300;
-}
-
-.footerLinkListLight { color: #4b5563; }
-.footerLinkListDark { color: #9ca3af; }
-
-.footerLinkList li {
-  margin-bottom: 0.5rem;
-}
-
-.footerLink {
-  text-decoration: none;
-  color: inherit;
-  transition: color 0.2s ease;
-}
-
-.footerLink:hover {
-  color: #ec4899;
-}
-
-.footerCopyright {
-  margin-top: 2rem;
-  padding-top: 2rem;
-  border-top: 1px solid;
-  text-align: center;
-  font-weight: 300;
-}
-
-.footerCopyrightLight {
-  border-top-color: #e5e7eb;
-  color: #4b5563;
-}
-
-.footerCopyrightDark {
-  border-top-color: #374151;
-  color: #9ca3af;
-}
-
-/* =========================================
    애니메이션
    ========================================= */
-@keyframes gradientShift {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-}
-
 @keyframes pulse {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.5; }
@@ -890,25 +457,17 @@
    반응형 디자인
    ========================================= */
 @media (min-width: 768px) {
-  .navigation { display: flex; }
-  .hamburgerButton { display: none; }
   .heroTitleContainer { font-size: 3.75rem; }
   .videoGrid { grid-template-columns: repeat(2, 1fr); gap: 2.5rem; }
   .videoIframe { height: 320px; }
-  .footerContent { grid-template-columns: 2fr 1fr 1fr; }
 }
 
 @media (min-width: 1024px) {
-  .headerContainer,
-  .mainContent,
-  .footerContainer { padding-left: 2rem; padding-right: 2rem; }
+  .mainContent { padding-left: 2rem; padding-right: 2rem; }
   .videoIframe { height: 360px; }
 }
 
 @media (max-width: 767px) {
-  .navigation { display: none; }
-  .hamburgerButton { display: flex; }
-  .toggleButton { display: none; }
   .weeklyStatsSection { margin: 1rem 0; padding: 1rem; }
   .weeklyStatsTitle { font-size: 1.25rem; margin-bottom: 1rem; }
   .statsGrid { grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 0.75rem; }
@@ -921,34 +480,23 @@
   .statsGrid { grid-template-columns: repeat(3, 1fr); }
   .statValue { font-size: 1.25rem; }
   .emptyStateImage { width: 80px; height: 80px; }
-  .sidebar { width: 100vw; }
 }
 
 /* =========================================
    접근성 및 유틸리티
    ========================================= */
 @media (prefers-reduced-motion: reduce) {
-  .logo,
-  .toggleButton,
   .loadingSpinner,
   .heroTitle { animation: none; }
   
   .statCard,
-  .navButton,
-  .toggleButton,
   .emptyStateButton,
-  .sidebar { transition: none; }
+  .retryButton { transition: none; }
 }
 
-.navButton:focus,
-.toggleButton:focus,
 .statCard:focus,
 .emptyStateButton:focus,
-.retryButton:focus,
-.hamburgerButton:focus,
-.sidebarNavButton:focus,
-.sidebarCloseButton:focus,
-.sidebarToggleButton:focus {
+.retryButton:focus {
   outline: 2px solid #ec4899;
   outline-offset: 2px;
 }
