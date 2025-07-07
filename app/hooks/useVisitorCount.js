@@ -12,15 +12,6 @@ export const useVisitorCount = () => {
 
   const hasIncrementedRef = useRef(false);
 
-  // 오늘 날짜를 YYYY-MM-DD 형식으로 가져오기 (Firebase용)
-  const getTodayString = () => {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, '0');
-    const day = String(today.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  };
-
   useEffect(() => {
     const initVisitorCount = async () => {
       // 일단 로딩 표시
@@ -91,7 +82,7 @@ export const useVisitorCount = () => {
       setVisitorStats(prev => ({
         ...prev,
         isLoading: false,
-        error: '새로고침 실패'
+        error: error.message || '통계 갱신 실패'
       }));
     }
   };
