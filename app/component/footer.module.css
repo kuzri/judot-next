@@ -107,6 +107,103 @@
   color: #ec4899;
 }
 
+/* =========================================
+   방문자 통계
+   ========================================= */
+.visitorStats {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  border-radius: 12px;
+  border: 1px solid;
+  text-align: center;
+}
+
+.visitorStatsLight {
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  border-color: #e2e8f0;
+  color: #1e293b;
+}
+
+.visitorStatsDark {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  border-color: #334155;
+  color: #f8fafc;
+}
+
+.visitorStatsContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.visitorStatItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.visitorStatLabel {
+  font-size: 0.875rem;
+  font-weight: 500;
+  opacity: 0.8;
+}
+
+.visitorStatValue {
+  font-size: 1.5rem;
+  font-weight: 700;
+  font-family: 'Inter', 'Pretendard', sans-serif;
+  line-height: 1;
+}
+
+.visitorStatToday {
+  color: #ec4899;
+}
+
+.visitorStatTotal {
+  color: #7c3aed;
+}
+
+.visitorStatDivider {
+  font-size: 1.25rem;
+  opacity: 0.5;
+  font-weight: 300;
+}
+
+.visitorStatError {
+  margin-top: 0.75rem;
+  font-size: 0.75rem;
+  color: #ef4444;
+  opacity: 0.8;
+}
+
+/* =========================================
+   방문자 통계 반응형
+   ========================================= */
+@media (max-width: 480px) {
+  .visitorStatsContainer {
+    gap: 1rem;
+  }
+  
+  .visitorStatValue {
+    font-size: 1.25rem;
+  }
+  
+  .visitorStatDivider {
+    display: none;
+  }
+  
+  .visitorStatItem {
+    gap: 0.25rem;
+  }
+}
+
+/* =========================================
+   기존 푸터 스타일 계속
+   ========================================= */
+
 .footerCopyright {
   margin-top: 2rem;
   padding-top: 2rem;
