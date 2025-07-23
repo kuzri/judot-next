@@ -14,7 +14,12 @@ import Footer from '../component/footer';
 const MEMBER_LIST = ["아이네", "징버거", "릴파", "고세구", "비챤"];
 
 // 유틸리티 함수들
-const formatDate = (date) => date.toLocaleDateString('ko-CA');
+const formatDate = (date) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
 
 const getCurrentWeekRange = () => {
   const now = new Date();
@@ -35,21 +40,27 @@ const getCurrentWeekRange = () => {
 
 // 커스텀 훅
 const useTheme = () => {
+  // 서버와 클라이언트에서 동일한 초기값 사용
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isThemeLoaded, setIsThemeLoaded] = useState(false);
 
   useEffect(() => {
+    // 클라이언트에서만 실행
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme) {
       setIsDarkMode(savedTheme === 'dark');
     } else {
       setIsDarkMode(window.matchMedia('(prefers-color-scheme: dark)').matches);
     }
+    setIsThemeLoaded(true);
   }, []);
 
   useEffect(() => {
-    localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
-    document.documentElement.classList.toggle('dark', isDarkMode);
-  }, [isDarkMode]);
+    if (isThemeLoaded) {
+      localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
+      document.documentElement.classList.toggle('dark', isDarkMode);
+    }
+  }, [isDarkMode, isThemeLoaded]);
 
   const toggleDarkMode = useCallback(() => {
     setIsDarkMode(prev => !prev);
@@ -100,7 +111,18 @@ const useDataFetching = () => {
 
 const useFilters = () => {
   const [selectedMembers, setSelectedMembers] = useState([]);
-  const [weekRangeFilter, setWeekRangeFilter] = useState(getCurrentWeekRange);
+  // 서버와 클라이언트에서 동일한 정적 초기값 사용
+  const [weekRangeFilter, setWeekRangeFilter] = useState({
+    start: '1900-01-01',
+    end: '2100-12-31'
+  });
+  const [isClient, setIsClient] = useState(false);
+
+  // 클라이언트에서만 실제 현재 주 설정
+  useEffect(() => {
+    setIsClient(true);
+    setWeekRangeFilter(getCurrentWeekRange());
+  }, []);
 
   const toggleMember = useCallback((memberName) => {
     setSelectedMembers(prev => 
@@ -128,7 +150,8 @@ const useFilters = () => {
     toggleMember,
     selectAll,
     goToThisWeek,
-    handleWeekChange
+    handleWeekChange,
+    isClient
   };
 };
 
@@ -305,12 +328,20 @@ export default function Main() {
     toggleMember,
     selectAll,
     goToThisWeek,
-    handleWeekChange
+    handleWeekChange,
+    isClient
   } = useFilters();
 
-  // 주간 통계 계산
+  // 전체 앱이 클라이언트에서 준비될 때까지 대기
+  const [isMounted, setIsMounted] = useState(false);
+  
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  // 주간 통계 계산 - 클라이언트 준비될 때까지 기본값
   const weeklyStats = useMemo(() => {
-    if (originData.length === 0) return { total: 0, members: {} };
+    if (originData.length === 0 || !isClient || !isMounted) return { total: 0, members: {} };
 
     const weeklyFilteredData = originData.filter(item => 
       item.uploadedDate >= weekRangeFilter.start && 
@@ -327,11 +358,11 @@ export default function Main() {
     });
 
     return stats;
-  }, [originData, weekRangeFilter]);
+  }, [originData, weekRangeFilter, isClient, isMounted]);
 
-  // 그룹화된 데이터 계산
+  // 그룹화된 데이터 계산 - 클라이언트 준비될 때까지 빈 객체
   const groupedData = useMemo(() => {
-    if (originData.length === 0) return {};
+    if (originData.length === 0 || !isClient || !isMounted) return {};
 
     let filteredData = originData.filter(item => 
       item.uploadedDate >= weekRangeFilter.start && 
@@ -353,7 +384,7 @@ export default function Main() {
     });
 
     return grouped;
-  }, [originData, selectedMembers, weekRangeFilter]);
+  }, [originData, selectedMembers, weekRangeFilter, isClient, isMounted]);
 
   const hasAnyData = useMemo(() => {
     return Object.keys(groupedData).length > 0 && 
@@ -367,6 +398,11 @@ export default function Main() {
       toggleMember(memberName);
     }
   }, [selectAll, toggleMember]);
+
+  // 완전히 마운트되지 않았을 때는 로딩 상태만 표시
+  if (!isMounted) {
+    return null; // 또는 아주 간단한 로딩 표시
+  }
 
   return (
     <>
@@ -395,11 +431,13 @@ export default function Main() {
             <h1 className={styles.heroTitleContainer}>
               🎀<span className={`${styles.heroTitle} ${styles.heroFont}`}>돚하이 자동 수집기</span>🎀
             </h1>
-            <WeeklyFilter 
-              className={`${styles.koreanFont} ${styles.weeklyFilterText} ${isDarkMode ? styles.weeklyFilterTextDark : styles.weeklyFilterTextLight}`} 
-              onWeekChange={handleWeekChange} 
-              initialWeekRange={weekRangeFilter}
-            />
+            {isClient && (
+              <WeeklyFilter 
+                className={`${styles.koreanFont} ${styles.weeklyFilterText} ${isDarkMode ? styles.weeklyFilterTextDark : styles.weeklyFilterTextLight}`} 
+                onWeekChange={handleWeekChange} 
+                initialWeekRange={weekRangeFilter}
+              />
+            )}
           </div>
 
           {error && (
@@ -417,7 +455,7 @@ export default function Main() {
             onStatCardClick={handleStatCardClick}
           />
           
-          {!isLoading && originData.length > 0 && !hasAnyData && (
+          {!isLoading && originData.length > 0 && !hasAnyData && isClient && (
             <EmptyState
               selectedMembers={selectedMembers}
               isDarkMode={isDarkMode}
@@ -426,7 +464,7 @@ export default function Main() {
             />
           )}
 
-          {isLoading && <LoadingState isDarkMode={isDarkMode} />}
+          {(isLoading || !isClient) && <LoadingState isDarkMode={isDarkMode} />}
           
           {hasAnyData && (
             <VideoSections
